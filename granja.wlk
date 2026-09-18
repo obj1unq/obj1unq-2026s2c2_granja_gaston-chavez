@@ -39,7 +39,18 @@ object personaje {
 
 	method plantar(cultivo) {
 		propiedad.plantar(cultivo, self.position())
+	}
+
+	method regar() {
+	  self.validarSiPuedeRegar()
+	  return game.colliders(self).forEach({cultivo => cultivo.regar(self)})
 	} 
+
+	method validarSiPuedeRegar() {
+	  if (not propiedad.hayCultivo(position)) {
+		self.error("no tengo nada para regar")
+	  }
+	}
 	
 }
 
@@ -50,6 +61,11 @@ object mercado {
 
 object granja {
 	const property cultivos = #{}
+	
+	method cultivosPlantados() {
+		return cultivos
+	}
+
 	method plantar(cultivo, position) {
 		self.validarPlantar(cultivo, position)
 		cultivo.position(position)

@@ -1,9 +1,96 @@
+import src.hector.*
 import wollok.game.*
 import granja.*
+import src.cultivos.*
+//import src.cultivos.Maiz
+//import src.cultivos.Trigo
+//import src.cultivos.Tomaco
 describe "test de la granja" {
 
 
     test "personaje" {
         assert.that(true)
+    }
+
+    test " Sembrar" {
+        personaje.position(game.at(5,5))
+        assert.equals(5, personaje.position().x())
+        assert.equals(5, personaje.position().y())
+
+        const tomaco = new Tomaco()
+        personaje.plantar(tomaco)
+        assert.equals(5, tomaco.position().x())
+        assert.equals(5, tomaco.position().y())
+
+        assert.equals(#{tomaco}, granja.cultivos())
+
+        const trigo = new Trigo()
+        assert.throwsException({personaje.plantar(trigo)})
+        personaje.position(game.at(6,6))
+        assert.throwsException({personaje.plantar(tomaco)})
+        personaje.plantar(trigo)
+        assert.equals(6, trigo.position().x())
+        assert.equals(6, trigo.position().y())
+    }
+
+    test "Sin cultivo" {
+        assert.throwsException({personaje.regar()})
+    }
+
+    test "Sembrar maiz y regar" {
+        const maiz = new Maiz()
+        personaje.plantar(maiz)
+        assert.equals("maiz_bebe.png", maiz.image())
+        personaje.regar()
+        assert.equals("maiz_adulto.png", maiz.image())
+        personaje.regar()
+        assert.equals("maiz_adulto.png", maiz.image())
+    }
+
+    test "Sembra trigo y regar" {
+        const trigo = new Trigo()
+        personaje.plantar(trigo)
+        assert.equals("trigo_0.png", trigo.image())
+        personaje.regar()
+        assert.equals("trigo_1.png", trigo.image())
+        personaje.regar()
+        assert.equals("trigo_2.png", trigo.image())
+        personaje.regar()
+        assert.equals("trigo_3.png", trigo.image())
+        personaje.regar()
+        assert.equals("trigo_0.png", trigo.image())
+    }
+}
+
+describe "Test granja tomaco" {
+    method initialize(){
+        game.height(5)
+        game.width(5)
+        game.ground("fondo.png")
+ 	    game.addVisualCharacter(personaje)
+    }
+
+    test "Regar tomaco" {
+        personaje.position(game.at(3,3))
+        const tomaco = new Tomaco()
+        personaje.plantar(tomaco)
+
+        personaje.regar()
+        assert.equals(3, tomaco.position().x())
+        assert.equals(4, tomaco.position().y())
+
+        personaje.position(game.at(3,4))
+        personaje.regar()
+        assert.equals(3, tomaco.position().x())
+        assert.equals(0, tomaco.position().y())
+
+        personaje.position(game.at(3,1))
+        const trigo = new Trigo()
+        personaje.plantar(trigo)
+
+        personaje.position(game.at(3,0))
+        personaje.regar()
+        assert.equals(3, tomaco.position().x())
+        assert.equals(0, tomaco.position().y())
     }
 }
