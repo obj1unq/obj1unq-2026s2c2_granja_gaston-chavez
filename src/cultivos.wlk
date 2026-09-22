@@ -67,7 +67,7 @@ class Tomaco {
 	}
 
 	method regar(cultivo) {
-		const nuevaFila = if (position.y() == game.height() - 1) 0 else position.y() + 1
+		const nuevaFila = if (position.y() == game.height() - 1) 0 else position.y() + 1 //el tablero es de 0 a 9 celdas, si la posicion del cultivo es 9, le pregunto a la altura 10-9, si es verdad, bajo a cero porque ya estaba en el borde
 		const nuevaPosicion = game.at(position.x(), nuevaFila)
 		if (not granja.hayCultivo(nuevaPosicion)) { //si no hay mercado, actualizo a la nueva posicion, en caso contrario me quedo en donde estoy
 			position = nuevaPosicion
