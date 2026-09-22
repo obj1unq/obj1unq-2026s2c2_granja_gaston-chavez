@@ -11,13 +11,20 @@ program lagranja {
 	game.width(10)
 	game.ground("fondo.png")
 
+	game.addVisual(mercado)
  	game.addVisualCharacter(personaje)
  	
-	keyboard.c().onPressDo({ personaje.cambiarGenero() })
+	keyboard.g().onPressDo({ personaje.cambiarGenero() })
 	keyboard.m().onPressDo({ personaje.plantar(new Maiz()) })
 	keyboard.t().onPressDo({ personaje.plantar(new Trigo()) })
 	keyboard.o().onPressDo({ personaje.plantar(new Tomaco()) })
 	keyboard.r().onPressDo({ personaje.regar()})
+	keyboard.c().onPressDo({ personaje.cosechar() })
+	keyboard.space().onPressDo({ game.say(personaje, personaje.cuantoPuedoVender()) })
+	
+	//keyboard.space().onPressDo({personaje.cuantoPuedoVender2() }) //no anda
+
+	game.onCollideDo(mercado, {personaje => personaje.vender()})
 
  	//  COMIENZA
 	game.start()

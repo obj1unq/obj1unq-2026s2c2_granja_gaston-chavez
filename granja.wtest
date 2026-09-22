@@ -60,6 +60,71 @@ describe "test de la granja" {
         personaje.regar()
         assert.equals("trigo_0.png", trigo.image())
     }
+
+    test "Cosecha" {
+      const tomaco = new Tomaco()
+      const trigo = new Trigo()
+      const maiz = new Maiz()
+      personaje.position(game.at(3,3))
+      assert.throwsException({personaje.cosechar()})
+      personaje.plantar(tomaco)
+      personaje.cosechar()
+
+      assert.equals(#{}, granja.cultivosPlantados())
+      assert.equals(#{tomaco}, granja.cultivosCosechados())
+
+      personaje.plantar(maiz)
+      assert.throwsException({personaje.cosechar()})
+      personaje.regar()
+      personaje.cosechar()
+
+      assert.equals(#{}, granja.cultivosPlantados())
+      assert.equals(#{tomaco,maiz}, granja.cultivosCosechados())
+
+      personaje.plantar(trigo)
+      assert.throwsException({personaje.cosechar()})
+      personaje.regar()
+      assert.throwsException({personaje.cosechar()})
+      personaje.regar()
+      assert.that(trigo.estaListaParaCosechar())
+      personaje.regar()
+      personaje.cosechar()
+      assert.equals(#{}, granja.cultivosPlantados())
+      assert.equals(#{tomaco,maiz,trigo}, granja.cultivosCosechados())
+    }
+
+    test "venta en el mercado" {
+      const tomaco = new Tomaco()
+      const trigo = new Trigo()
+      const maiz = new Maiz()
+      personaje.position(game.at(3,3))
+      assert.throwsException({personaje.cosechar()})
+      personaje.plantar(tomaco)
+      personaje.cosechar()
+
+      assert.equals(#{}, granja.cultivosPlantados())
+      assert.equals(#{tomaco}, granja.cultivosCosechados())
+
+      personaje.plantar(trigo)
+      assert.throwsException({personaje.cosechar()})
+      personaje.regar()
+      assert.throwsException({personaje.cosechar()})
+      personaje.regar()
+      assert.that(trigo.estaListaParaCosechar())
+      personaje.cosechar()
+      assert.equals(2, trigo.etapaEvolucion())
+
+      assert.equals(#{}, granja.cultivosPlantados())
+      assert.equals(#{tomaco,trigo}, granja.cultivosCosechados())
+
+      assert.throwsException({personaje.vender()})
+
+      personaje.position(mercado.position())
+      personaje.vender() //
+
+      assert.equals(180, personaje.moneda())
+      assert.equals(#{}, personaje.plantasParaVender())
+    }
 }
 
 describe "Test granja tomaco" {
