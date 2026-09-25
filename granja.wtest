@@ -1,9 +1,200 @@
+import src.hector.*
 import wollok.game.*
 import granja.*
+import src.cultivos.*
+//import src.cultivos.Maiz
+//import src.cultivos.Trigo
+//import src.cultivos.Tomaco
 describe "test de la granja" {
 
 
     test "personaje" {
         assert.that(true)
+    }
+
+    test " Sembrar" {
+        personaje.position(game.at(5,5))
+        assert.equals(5, personaje.position().x())
+        assert.equals(5, personaje.position().y())
+
+        const tomaco = new Tomaco()
+        personaje.plantar(tomaco)
+        assert.equals(5, tomaco.position().x())
+        assert.equals(5, tomaco.position().y())
+
+        assert.equals(#{tomaco}, granja.cultivos())
+
+        const trigo = new Trigo()
+        assert.throwsException({personaje.plantar(trigo)})
+        personaje.position(game.at(6,6))
+        assert.throwsException({personaje.plantar(tomaco)})
+        personaje.plantar(trigo)
+        assert.equals(6, trigo.position().x())
+        assert.equals(6, trigo.position().y())
+    }
+
+    test "Sin cultivo" {
+        assert.throwsException({personaje.regar()})
+    }
+
+    test "Sembrar maiz y regar" {
+        const maiz = new Maiz()
+        personaje.plantar(maiz)
+        assert.equals("maiz_bebe.png", maiz.image())
+        personaje.regar()
+        assert.equals("maiz_adulto.png", maiz.image())
+        personaje.regar()
+        assert.equals("maiz_adulto.png", maiz.image())
+    }
+
+    test "Sembra trigo y regar" {
+        const trigo = new Trigo()
+        personaje.plantar(trigo)
+        assert.equals("trigo_0.png", trigo.image())
+        personaje.regar()
+        assert.equals("trigo_1.png", trigo.image())
+        personaje.regar()
+        assert.equals("trigo_2.png", trigo.image())
+        personaje.regar()
+        assert.equals("trigo_3.png", trigo.image())
+        personaje.regar()
+        assert.equals("trigo_0.png", trigo.image())
+    }
+
+    test "Cosecha" {
+      const tomaco = new Tomaco()
+      const trigo = new Trigo()
+      const maiz = new Maiz()
+      personaje.position(game.at(3,3))
+      assert.throwsException({personaje.cosechar()})
+      personaje.plantar(tomaco)
+      personaje.cosechar()
+
+      assert.equals(#{}, granja.cultivosPlantados())
+      assert.equals(#{tomaco}, granja.cultivosCosechados())
+
+      personaje.plantar(maiz)
+      assert.throwsException({personaje.cosechar()})
+      personaje.regar()
+      personaje.cosechar()
+
+      assert.equals(#{}, granja.cultivosPlantados())
+      assert.equals(#{tomaco,maiz}, granja.cultivosCosechados())
+
+      personaje.plantar(trigo)
+      assert.throwsException({personaje.cosechar()})
+      personaje.regar()
+      assert.throwsException({personaje.cosechar()})
+      personaje.regar()
+      assert.that(trigo.estaListaParaCosechar())
+      personaje.regar()
+      personaje.cosechar()
+      assert.equals(#{}, granja.cultivosPlantados())
+      assert.equals(#{tomaco,maiz,trigo}, granja.cultivosCosechados())
+    }
+
+    test "venta en el mercado" {
+      const tomaco = new Tomaco()
+      const trigo = new Trigo()
+      const maiz = new Maiz()
+      personaje.position(game.at(3,3))
+      assert.throwsException({personaje.cosechar()})
+      personaje.plantar(tomaco)
+      personaje.cosechar()
+
+      assert.equals(#{}, granja.cultivosPlantados())
+      assert.equals(#{tomaco}, granja.cultivosCosechados())
+
+      personaje.plantar(trigo)
+      assert.throwsException({personaje.cosechar()})
+      personaje.regar()
+      assert.throwsException({personaje.cosechar()})
+      personaje.regar()
+      assert.that(trigo.estaListaParaCosechar())
+      personaje.cosechar()
+      assert.equals(2, trigo.etapaEvolucion())
+
+      assert.equals(#{}, granja.cultivosPlantados())
+      assert.equals(#{tomaco,trigo}, granja.cultivosCosechados())
+
+      assert.throwsException({personaje.vender()})
+
+      personaje.position(mercado.position())
+      personaje.vender() //
+
+      assert.equals(180, personaje.moneda())
+      assert.equals(#{}, personaje.plantasParaVender())
+    }
+
+    test "sembrar multiples plantas" {
+        const tomaco0 = new Tomaco()
+        const tomaco1 = new Tomaco()
+
+        const maiz0 = new Maiz()
+        const maiz1 = new Maiz()
+        const maiz2 = new Maiz()
+
+        const trigo0 = new Trigo()
+        const trigo1 = new Trigo()
+        const trigo2 = new Trigo()
+        const trigo3 = new Trigo()
+
+        //planta 2 cultivos de tomacos
+        personaje.position(game.at(0,0))
+        personaje.plantar(tomaco0)
+        personaje.position(game.at(0,1))
+        personaje.plantar(tomaco1)
+
+        //planta 3 cultivos de maiz
+        personaje.position(game.at(0,2))
+        personaje.plantar(maiz0)
+        personaje.position(game.at(0,3))
+        personaje.plantar(maiz1)
+        personaje.position(game.at(0,4))
+        personaje.plantar(maiz2)
+
+        //planta 4 cultivos de trigo
+        personaje.position(game.at(0,5))
+        personaje.plantar(trigo0)
+        personaje.position(game.at(0,6))
+        personaje.plantar(trigo1)
+        personaje.position(game.at(0,7))
+        personaje.plantar(trigo2)
+        personaje.position(game.at(0,8))
+        personaje.plantar(trigo3)
+        assert.equals(#{tomaco0,tomaco1,maiz0,maiz1,maiz2,trigo0,trigo1,trigo2,trigo3}, granja.cultivos())
+    }
+}
+
+describe "Test granja tomaco" {
+    method initialize(){
+        game.height(5)
+        game.width(5)
+        game.ground("fondo.png")
+ 	    game.addVisualCharacter(personaje)
+    }
+
+    test "Regar tomaco" {
+        personaje.position(game.at(3,3))
+        const tomaco = new Tomaco()
+        personaje.plantar(tomaco)
+
+        personaje.regar()
+        assert.equals(3, tomaco.position().x())
+        assert.equals(4, tomaco.position().y())
+
+        personaje.position(game.at(3,4))
+        personaje.regar()
+        assert.equals(3, tomaco.position().x())
+        assert.equals(0, tomaco.position().y())
+
+        personaje.position(game.at(3,1))
+        const trigo = new Trigo()
+        personaje.plantar(trigo)
+
+        personaje.position(game.at(3,0))
+        personaje.regar()
+        assert.equals(3, tomaco.position().x())
+        assert.equals(0, tomaco.position().y())
     }
 }
