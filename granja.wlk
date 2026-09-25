@@ -99,13 +99,13 @@ object personaje {
 	  return "Tengo " + propiedad.cultivosCosechados().size() + " planta para vender por " + self.oroDeLaVenta() + " monedas"
 	}
 
-	//method cuantoPuedoVender2() {
-	//  game.say(self, "Tengo " + propiedad.cultivosCosechados().size() + "planta para vender por " + self.oroDeLaVenta() + " monedas")
-	//} no anda
+	method cuantoPuedoVender2() {
+	  game.say(self, "Tengo " + propiedad.cultivosCosechados().size() + "planta para vender por " + self.oroDeLaVenta() + " monedas")
+	} //no anda
 }
 
 object mercado {
-	const property position = game.at(5,5)
+	const property position = game.at(8,9)
 	const property image = "mercado.png"
 }
 

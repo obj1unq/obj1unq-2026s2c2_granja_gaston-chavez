@@ -125,6 +125,45 @@ describe "test de la granja" {
       assert.equals(180, personaje.moneda())
       assert.equals(#{}, personaje.plantasParaVender())
     }
+
+    test "sembrar multiples plantas" {
+        const tomaco0 = new Tomaco()
+        const tomaco1 = new Tomaco()
+
+        const maiz0 = new Maiz()
+        const maiz1 = new Maiz()
+        const maiz2 = new Maiz()
+
+        const trigo0 = new Trigo()
+        const trigo1 = new Trigo()
+        const trigo2 = new Trigo()
+        const trigo3 = new Trigo()
+
+        //planta 2 cultivos de tomacos
+        personaje.position(game.at(0,0))
+        personaje.plantar(tomaco0)
+        personaje.position(game.at(0,1))
+        personaje.plantar(tomaco1)
+
+        //planta 3 cultivos de maiz
+        personaje.position(game.at(0,2))
+        personaje.plantar(maiz0)
+        personaje.position(game.at(0,3))
+        personaje.plantar(maiz1)
+        personaje.position(game.at(0,4))
+        personaje.plantar(maiz2)
+
+        //planta 4 cultivos de trigo
+        personaje.position(game.at(0,5))
+        personaje.plantar(trigo0)
+        personaje.position(game.at(0,6))
+        personaje.plantar(trigo1)
+        personaje.position(game.at(0,7))
+        personaje.plantar(trigo2)
+        personaje.position(game.at(0,8))
+        personaje.plantar(trigo3)
+        assert.equals(#{tomaco0,tomaco1,maiz0,maiz1,maiz2,trigo0,trigo1,trigo2,trigo3}, granja.cultivos())
+    }
 }
 
 describe "Test granja tomaco" {
